@@ -1,0 +1,25 @@
+on:
+  schedule:
+    - cron: '0 8 * * *' # chaque jour à 08:00 UTC
+  workflow_dispatch:
+
+jobs:
+  update-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Récupérer la capture d'écran
+        env:
+          SITE_URL: "https://john-lion.netlify.app/" # remplacer par votre site
+          TOKEN: ${{ secrets.SCREENSHOT_API_TOKEN }}
+        run: |
+          # Exemple avec un service hypothétique ; adaptez l'URL d'API
+          curl -s "https://api.screenshot.example/v1/capture?token=$TOKEN&url=$SITE_URL&width=1200" -o preview.png
+
+      - name: Commit and push
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Update site preview"
+          file_pattern: "preview.png"
